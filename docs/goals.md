@@ -16,3 +16,9 @@
 - Sleep function, auto wake on button press
 
 ## Timeline
+8 Weeks
+- 3 Weeks research and development
+- 2 Weeks firmware and design
+- 3 Weeks manufacturing
+
+![Project Timeline](Images/Timeline.png)
