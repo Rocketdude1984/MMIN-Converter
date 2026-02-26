@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
-#define MAX_INPUT 16
+#define MAX_INPUT 64
 
 char input_buffer[MAX_INPUT];
 uint8_t input_length = 0;
@@ -40,7 +41,13 @@ void appendChar(char c)
     }
 }
 
-void convertAndCompute(){
+void appendString(char *unit){
+    if (input_length < MAX_INPUT - 2){
+        strcat(input_buffer, unit);
+    }
+}
+
+void calculation(){
     printf(input_buffer);
 }
 
@@ -58,18 +65,18 @@ void processKey(Key_t key){
         case KEY_8: appendChar('8'); break;
         case KEY_9: appendChar('9'); break;
         
-        case KEY_DECIMAL: printf("."); break;
+        case KEY_DECIMAL: appendChar('.'); break;
         
         case KEY_ADD: appendChar('+'); break;
         case KEY_SUBTRACT: appendChar('-'); break;
         case KEY_MULTIPLY: appendChar('*'); break;
         case KEY_DIVIDE: appendChar('/'); break;
         
-        case KEY_MM: printf("mm"); break;
-        case KEY_IN: printf("in"); break;
+        case KEY_MM: appendString("mm"); break;
+        case KEY_IN: appendString("in"); break;
         
-        case KEY_TOIN: convertAndCompute(); break;
-        case KEY_TOMM: convertAndCompute(); break;
+        case KEY_TOIN: calculation(); break;
+        case KEY_TOMM: calculation(); break;
         
         default: break;
         
@@ -81,6 +88,12 @@ int main()
     processKey(KEY_3);
     processKey(KEY_DIVIDE);
     processKey(KEY_4);
+    processKey(KEY_IN);
+    processKey(KEY_ADD);
+    processKey(KEY_1);
+    processKey(KEY_2);
+    processKey(KEY_MM);
     processKey(KEY_TOIN);
+    
     return 0;
 }
