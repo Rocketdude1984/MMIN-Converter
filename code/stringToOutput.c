@@ -2,20 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
+
+typedef enum {
+    TO_MM,
+    TO_IN
+} t_unit;
 
 // Forward declarations
-double parseExpression(const char **expr);
-double parseTerm(const char **expr);
-double parseFactor(const char **expr);
+double parseExpression( char **expr);
+double parseTerm( char **expr);
+double parseFactor( char **expr);
 
 // Helper to skip whitespace and peek at the next char
-void skipWhiteSpace(const char **expr) {
+void skipWhiteSpace(char **expr) {
     while (isspace(**expr)) {
         (*expr)++;
     }
 }
 
-double parseFactor(const char **expr) {
+double parseFactor(char **expr) {
     skipWhiteSpace(expr);
     
     char *end;
@@ -29,7 +35,7 @@ double parseFactor(const char **expr) {
     return val;
 }
 
-double parseTerm(const char **expr) {
+double parseTerm(char **expr) {
     double nodes = parseFactor(expr);
     skipWhiteSpace(expr);
     
@@ -51,7 +57,7 @@ double parseTerm(const char **expr) {
     return nodes;
 }
 
-double parseExpression(const char **expr){
+double parseExpression(char **expr){
     double nodes = parseTerm(expr);
     skipWhiteSpace(expr);
     
@@ -123,7 +129,7 @@ double unitConversion(double input, int unit){
     }
 }
 
-void convertToString(double value, const char *inputString, int unit){
+void convertToString(double value, char *inputString, int unit){
     snprintf(inputString, sizeof(inputString), "%g", value);
     if (unit){
         strcat(inputString, "in");
@@ -132,27 +138,34 @@ void convertToString(double value, const char *inputString, int unit){
     }
 }
 
-int main(){
+void calculation(char *buffer, bool unit, char *calculatedString){
     
-    int unit = 0;
-    char buffer[] = "0.3725in*3.2mm";
     char convertedBuffer[100] = {0};
     char outputString[16] = {0};
     
     splitBuffer(buffer, convertedBuffer);
     
-    const char *ptr = convertedBuffer;
+    char *ptr = convertedBuffer;
     double value = parseExpression(&ptr);
     
     double convertedValue = unitConversion(value, unit);
     
     convertToString(convertedValue, outputString, unit);
     
-    printf("Orginal Buffer: %s\n", buffer);
-    printf("convertedBuffer: %s\n", convertedBuffer);
-    printf("%g\n", convertedValue);
-    printf("%s\n", outputString);
+    strcpy(calculatedString, outputString);
     
+}
+
+int main() {
+    
+    bool unit = TO_IN;
+    char buffer[] = "0.3725in*3.2mm";
+    char calculatedString[16] = {0};
+    
+    calculation(buffer, unit, calculatedString);
+    
+    printf("%s\n", buffer);
+    printf("%s\n", calculatedString);
     
     return 0;
 }
