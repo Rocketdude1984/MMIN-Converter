@@ -104,9 +104,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   int key;
-  char msg[10];
-
-  char keyMap[ROWS][COLS] = {'mm'};
 
   while (1)
   {
@@ -118,7 +115,7 @@ int main(void)
 		if (key == keypadScan()){
 			sprintf(msg, "%d\r\n", key);
 
-	HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+	//HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
 
 	//Wait until released
 	while (keypadScan() != -1);
