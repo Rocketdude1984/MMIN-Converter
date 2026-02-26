@@ -6,9 +6,10 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define MAX_INPUT 64
-#define MAX_OUTPUT 16
+#define MAX_OUTPUT 32
 
 typedef struct {
 	char input_buffer[MAX_INPUT];
@@ -82,10 +83,11 @@ double parseTerm(char **expr) {
         if (op == '*'){
             nodes *= nextFactor;
         } else {
-            if (nextFactor != 0) {
+            if (nextFactor != 0.0) {
                 nodes /= nextFactor;
             } else {
                 fprintf(stderr, "Error: Divide by zero\n");
+                return NAN;
             }
         }
         skipWhiteSpace(expr);
@@ -113,15 +115,11 @@ double parseExpression(char **expr){
 
 void convert(char* input, char* output){
     
-    if (strchr(input, 'i') != NULL){
-        double coef = atof(input);
-        coef *= 25.4;
-        sprintf(output, "%g", coef);
-    } else {
-        double coef = atof(input);
-        sprintf(output, "%g", coef);
+    double val = atof(input);
+    if (strchr(input, 'i') != NULL) {
+        val *= 25.4;
     }
-    
+    sprintf(output, "%g", val);
 }
 
 
@@ -165,19 +163,31 @@ double unitConversion(double input, int unit){
     }
 }
 
-void convertToString(double value, char *inputString, int unit){
-    snprintf(inputString, sizeof(inputString), "%g", value);
-    if (unit){
-        strcat(inputString, "in");
+void convertToString(double value, char *inputString, int unit, size_t inputSize){
+    
+    if (isnan(value))
+    {
+        snprintf(inputString, inputSize, "ERROR");
+        return;
+    }
+    if (isinf(value))
+    {
+        snprintf(inputString, inputSize, "OVERFLOW");
+        return;
+    }
+    
+    int len = snprintf(inputString, inputSize, "%g", value);
+    if (unit == TO_IN){
+        strncat(inputString, "in", inputSize - len - 1);
     } else {
-        strcat(inputString, "mm");
+        strncat(inputString, "mm", inputSize - len - 1);
     }
 }
 
-void calculation(char *buffer, bool unit, char *calculatedString){
+void calculation(char *buffer, unit_t unit, char *calculatedString){
     
-    char convertedBuffer[100] = {0};
-    char outputString[16] = {0};
+    char convertedBuffer[MAX_INPUT * 2] = {0};
+    char outputString[MAX_OUTPUT] = {0};
     
     splitBuffer(buffer, convertedBuffer);
     
@@ -186,9 +196,9 @@ void calculation(char *buffer, bool unit, char *calculatedString){
     
     double convertedValue = unitConversion(value, unit);
     
-    convertToString(convertedValue, outputString, unit);
+    convertToString(convertedValue, outputString, unit, MAX_OUTPUT);
     
-    strcpy(calculatedString, outputString);
+    strncpy(calculatedString, outputString, MAX_OUTPUT - 1);
 }
 
 void appendChar(const char c, calculator_t *calc)
@@ -294,15 +304,16 @@ int main()
 
 	calculator_t calc = {0};
 
-	processKey(KEY_2, &calc);
-	processKey(KEY_5, &calc);
-	processKey(KEY_DECIMAL, &calc);
-	processKey(KEY_4, &calc);
-	processKey(KEY_MM, &calc);
-	processKey(KEY_ADD, &calc);
 	processKey(KEY_1, &calc);
-	processKey(KEY_IN, &calc);
-	processKey(KEY_TOIN, &calc);
+	processKey(KEY_DIVIDE, &calc);
+	processKey(KEY_DECIMAL, &calc);
+	processKey(KEY_1, &calc);
+	processKey(KEY_TOMM, &calc);
+	//processKey(KEY_MM, &calc);
+	//processKey(KEY_ADD, &calc);
+	//processKey(KEY_1, &calc);
+	//processKey(KEY_IN, &calc);
+	//processKey(KEY_TOIN, &calc);
 	
 	printf("%s\n", calc.input_buffer);
 	printf("%s\n", calc.outputString);
