@@ -186,25 +186,21 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 int keypadScan(void){
+	int result = -1;
 	for (int c = 0; c < COLS; c++){
-
-		//Set all columns HIGH
-		for (int i = 0; i < COLS; i++){
-			HAL_GPIO_WritePin(colPorts[i], colPins[i], GPIO_PIN_SET);
-		}
-
 		//Pull current column LOW
 		HAL_GPIO_WritePin(colPorts[c], colPins[c], GPIO_PIN_RESET);
-		HAL_Delay(1);
 
 		//Check rows
 		for (int r = 0; r < ROWS; r++){
 			if (HAL_GPIO_ReadPin(rowPorts[r], rowPins[r]) == GPIO_PIN_RESET){
 				return (r * COLS) + c;
+				break;
 			}
 		}
+		HAL_GPIO_WritePin(colPorts[c], colPins[c], GPIO_PIN_SET);
 	}
-	return -1;
+	return result;
 }
 /* USER CODE END 4 */
 
