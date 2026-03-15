@@ -89,12 +89,13 @@ void splitBuffer(char* input, char* output, unitFlags_t *flags)
     char convertedTerm[32] = {0};
     int termIdx = 0;
     output[0] = '\0';
+    bool eFlag = false;
     
     for (int i = 0; i <= strlen(input); i++)
     {
         char c = input[i];
         
-        if (c == '+'|| c == '-'|| c == '*'|| c == '/' || c == '\0') {
+        if ((c == '+'|| c == '-'|| c == '*'|| c == '/' || c == '\0') && !eFlag) {
             
             if (termIdx > 0) {
                 term[termIdx] = '\0';
@@ -111,6 +112,16 @@ void splitBuffer(char* input, char* output, unitFlags_t *flags)
         } else if (c != ' ') {
             term[termIdx++] = c;
         }
+
+        if (c == 'e')
+		{
+			eFlag = true;
+		}
+
+		if ((c == '+' || c == '-') && eFlag)
+		{
+			eFlag = false;
+		}
     }
     
 }
@@ -165,7 +176,7 @@ void convertToString(double value, char *inputString, int unit, size_t inputSize
     }
 }
 
-void calculation(char *buffer, unit_t unit, char *calculatedString, char *previousString){
+void calculation(char *buffer, unit_t unit, char *calculatedString, char *previousString, uint8_t length){
 
     unitFlags_t flags = {0};
 
@@ -190,6 +201,7 @@ void calculation(char *buffer, unit_t unit, char *calculatedString, char *previo
 
     strncpy(buffer, outputString, MAX_OUTPUT - 1);
 
-    displayString(previousString);
-    //strncpy(calculatedString, testString, MAX_OUTPUT - 1);
+    OLED_Clear();
+    drawString5x7(previousString);
+
 }

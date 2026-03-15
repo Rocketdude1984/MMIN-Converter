@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usart.h"
+#include "spi.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -99,10 +99,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART1_UART_Init();
+  MX_SPI1_Init();
+  OLED_Init();
+  OLED_Clear();
   /* USER CODE BEGIN 2 */
   calculator_t calc = {0};
   int key;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -112,7 +115,7 @@ int main(void)
     key = keypadScan();
 
     // -------------------Temp
-    char keyString[64];
+    //char keyString[64];
     //int len = sprintf(keyString, "Value: %d\r\n", key);
     //--------------------Temp
 
@@ -122,9 +125,14 @@ int main(void)
 		  if (key == keypadScan()){
 			  
 			  processKey(key, &calc);
-			  displayString(calc.input_buffer);
+			  drawString8x16(calc.input_buffer);
 
-	      //HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+			  calc.input_length = strlen(calc.input_buffer);
+			  /*
+			  char lengthStr[4];
+			  sprintf(lengthStr, "%u", calc.input_length);
+			  drawString5x7(lengthStr);
+			  */
 
 	      //Wait until released
 	      while (keypadScan() != -1);

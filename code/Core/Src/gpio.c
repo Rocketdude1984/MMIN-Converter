@@ -51,12 +51,17 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4, GPIO_PIN_SET);
+                          |GPIO_PIN_4|CS_Pin|RES_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, VCC_EN_Pin|D_C_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PA0 PA1 PA2 PA3
-                           PA4 */
+                           PA4 VCC_EN_Pin CS_Pin RES_Pin
+                           D_C_Pin */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4;
+                          |GPIO_PIN_4|VCC_EN_Pin|CS_Pin|RES_Pin
+                          |D_C_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

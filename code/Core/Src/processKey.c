@@ -1,5 +1,6 @@
 #include "processKey.h"
 #include "calculator.h"
+#include "ssd1305.h"
 
 void appendChar(const char c, calculator_t *calc)
 {
@@ -22,6 +23,7 @@ void clearBuffer(calculator_t *calc)
 {
 	calc->input_length = 0;
 	calc->input_buffer[0] = '\0';
+	OLED_Clear();
 }
 
 char keyToChar(key_t key)
@@ -89,10 +91,10 @@ void processKey(key_t key, calculator_t *calc) {
 		clearBuffer(calc);
 		break;
 	case KEY_TOIN:
-		calculation(calc->input_buffer, TO_IN, calc->output_buffer, calc->previous_buffer);
+		calculation(calc->input_buffer, TO_IN, calc->output_buffer, calc->previous_buffer, calc->input_length);
 		break;
 	case KEY_TOMM:
-		calculation(calc->input_buffer, TO_MM, calc->output_buffer, calc->previous_buffer);
+		calculation(calc->input_buffer, TO_MM, calc->output_buffer, calc->previous_buffer, calc->input_length);
 		break;
 	default:
 		break;
