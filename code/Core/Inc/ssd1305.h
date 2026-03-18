@@ -17,5 +17,8 @@ void drawChar5x7(int8_t x, char c);
 void drawString5x7(const char *str);
 void drawChar8x16(int8_t x, char c);
 void drawString8x16(const char *str);
+void drawCursor();
+void eraseCursor();
+void splashScreen();
 
 #endif

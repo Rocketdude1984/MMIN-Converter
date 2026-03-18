@@ -3,5 +3,6 @@
 
 #define MAX_INPUT 64
 #define MAX_OUTPUT 32
+#define BLINK_INTERVAL 800
 
 #endif

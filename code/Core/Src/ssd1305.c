@@ -133,7 +133,7 @@ void drawChar8x16(int8_t x, char c)
 void drawString8x16(const char *str)
 {
 
-	int8_t x = 125 - strlen(str)*8;
+	int8_t x = 123 - strlen(str)*8;
 
 	while(*str)
 	{
@@ -158,3 +158,19 @@ void drawString5x7(const char *str)
 		str++;
 	}
 }
+
+void drawCursor()
+{
+	drawChar8x16(123,'|');
+}
+
+void eraseCursor()
+{
+	drawChar8x16(123, ' ');
+}
+
+void splashScreen()
+{
+	drawString5x7("MINN Converter V1");
+}
+

@@ -41,6 +41,9 @@ uint16_t rowPins[ROWS] = {GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_10, GPIO_PIN_11};
 
 GPIO_TypeDef* colPorts[COLS] = {GPIOA, GPIOA, GPIOA, GPIOA, GPIOA};
 uint16_t colPins[COLS] = {GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4};
+
+uint32_t lastBlinkTime = 0;
+uint8_t cursorVisible = 0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -100,9 +103,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI1_Init();
+  /* USER CODE BEGIN 2 */
   OLED_Init();
   OLED_Clear();
-  /* USER CODE BEGIN 2 */
+  splashScreen();
+  drawCursor();
   calculator_t calc = {0};
   int key;
 
@@ -112,12 +117,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    key = keypadScan();
 
-    // -------------------Temp
-    //char keyString[64];
-    //int len = sprintf(keyString, "Value: %d\r\n", key);
-    //--------------------Temp
+	  // Inside your while(1) loop:
+	  uint32_t currentTime = HAL_GetTick();
+
+	  if (currentTime - lastBlinkTime >= BLINK_INTERVAL) {
+	      lastBlinkTime = currentTime;
+	      cursorVisible = !cursorVisible; // Toggle
+
+	      // Update the display at the end of the input buffer
+	      if (cursorVisible) {
+	          drawCursor();
+	      } else {
+	          eraseCursor();
+	      }
+	  }
+
+    key = keypadScan();
 
 	  if (key != -1){
 		  HAL_Delay(20); //Debounce delay
@@ -157,12 +173,11 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -178,7 +193,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -186,21 +201,25 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 int keypadScan(void){
-	int result = -1;
 	for (int c = 0; c < COLS; c++){
+
+		//Set all columns HIGH
+		for (int i = 0; i < COLS; i++){
+			HAL_GPIO_WritePin(colPorts[i], colPins[i], GPIO_PIN_SET);
+		}
+
 		//Pull current column LOW
 		HAL_GPIO_WritePin(colPorts[c], colPins[c], GPIO_PIN_RESET);
+		HAL_Delay(1);
 
 		//Check rows
 		for (int r = 0; r < ROWS; r++){
 			if (HAL_GPIO_ReadPin(rowPorts[r], rowPins[r]) == GPIO_PIN_RESET){
 				return (r * COLS) + c;
-				break;
 			}
 		}
-		HAL_GPIO_WritePin(colPorts[c], colPins[c], GPIO_PIN_SET);
 	}
-	return result;
+	return -1;
 }
 /* USER CODE END 4 */
 
