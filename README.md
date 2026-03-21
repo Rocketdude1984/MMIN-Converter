@@ -9,4 +9,4 @@ Simple converter for mm to inches and inches to mm. Meant as a project to advanc
 - TPS61040 boost converter (12v)
 - 2xAA battery holder
 
-![Prototype](Images/MINNConverter-Prototype.jpg)
+<img src="docs/Images/MINNConverter-Prototype.jpg" width="50%">
