@@ -8,8 +8,8 @@ Simple converter for mm to inches and inches to mm. Meant as a project to advanc
 2xAA batteries
 
 ## Parts
-OLED screen - 2.23 Inch OLED LCD Display Module SSD1305 Drive IC 24 Pin 12832 LCD Screen Board 128x32 SPI Interface White https://www.amazon.com/dp/B0DYXSCPYH?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_5
-Battery Holder - Philmore BH321P https://www.ebay.com/itm/175575917461
+- OLED screen - 2.23 Inch OLED LCD Display Module SSD1305 Drive IC 24 Pin 12832 LCD Screen Board 128x32 SPI Interface White https://www.amazon.com/dp/B0DYXSCPYH?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_5
+- Battery Holder - Philmore BH321P https://www.ebay.com/itm/175575917461
 
 ## Prototype
 - Button Matrix
